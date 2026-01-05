@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>US Sector Cycle Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #fff; font-family: sans-serif; }
+        .chart-container { position: relative; width: 100vw; max-width: 600px; aspect-ratio: 1; }
+        canvas { width: 100% !important; height: 100% !important; }
+    </style>
+</head>
+<body>
+    <div class="chart-container">
+        <canvas id="usSectorCycleChart"></canvas>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('usSectorCycleChart');
+        
+        const sectorLabels = {
+            NW: ["テクノロジー", "一般消費財", "通信"],
+            NE: ["資本財", "素材", "金融"],
+            SE: ["エネルギー", "不動産"],
+            SW: ["ヘルスケア", "生活必需品", "公益"]
+        };
+
+        var bgPlugin = {
+            id: 'bgPlugin',
+            beforeDraw: function(chart) {
+                var ctx = chart.ctx;
+                var ca = chart.chartArea;
+                var x = chart.scales.x;
+                var y = chart.scales.y;
+                var midX = x.getPixelForValue(0);
+                var midY = y.getPixelForValue(0);
+                
+                ctx.save();
+                
+                // 背景色
+                // NW: 回復 (Green/Cyan)
+                ctx.fillStyle = 'rgba(225, 250, 240, 0.5)';
+                ctx.fillRect(ca.left, ca.top, midX - ca.left, midY - ca.top);
+                
+                // NE: 好況 (Red/Orange)
+                ctx.fillStyle = 'rgba(255, 235, 235, 0.5)';
+                ctx.fillRect(midX, ca.top, ca.left + ca.width - midX, midY - ca.top);
+                
+                // SE: 後退 (Yellow/Amber)
+                ctx.fillStyle = 'rgba(255, 252, 230, 0.5)';
+                ctx.fillRect(midX, midY, ca.left + ca.width - midX, ca.top + ca.height - midY);
+                
+                // SW: 不況 (Blue/Gray)
+                ctx.fillStyle = 'rgba(235, 235, 250, 0.5)';
+                ctx.fillRect(ca.left, midY, midX - ca.left, ca.top + ca.height - midY);
+                
+                // 十字線
+                ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(midX, ca.top); ctx.lineTo(midX, ca.bottom);
+                ctx.moveTo(ca.left, midY); ctx.lineTo(ca.right, midY);
+                ctx.stroke();
+
+                // テキスト描画
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.font = 'bold 16px sans-serif';
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                
+                ctx.fillText('回復期', (ca.left + midX)/2, (ca.top + midY)/2);
+                ctx.fillText('好況期', (midX + ca.right)/2, (ca.top + midY)/2);
+                ctx.fillText('後退期', (midX + ca.right)/2, (midY + ca.bottom)/2);
+                ctx.fillText('不況期', (ca.left + midX)/2, (midY + ca.bottom)/2);
+
+                // 四隅の業種名
+                ctx.font = '10px sans-serif';
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                var pad = 10;
+                var lh = 12;
+
+                // NW
+                ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+                sectorLabels.NW.forEach((t, i) => ctx.fillText(t, ca.left + pad, ca.top + pad + (i * lh)));
+                // NE
+                ctx.textAlign = 'right';
+                sectorLabels.NE.forEach((t, i) => ctx.fillText(t, ca.right - pad, ca.top + pad + (i * lh)));
+                // SE
+                ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+                sectorLabels.SE.slice().reverse().forEach((t, i) => ctx.fillText(t, ca.right - pad, ca.bottom - pad - (i * lh)));
+                // SW
+                ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+                sectorLabels.SW.slice().reverse().forEach((t, i) => ctx.fillText(t, ca.left + pad, ca.bottom - pad - (i * lh)));
+
+                ctx.restore();
+            }
+        };
+
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        // 軌跡 (線のみ)
+                        label: '軌跡',
+                        data: [{"x": -4.18, "y": 6.95}, {"x": -0.98, "y": 8.02}, {"x": -2.32, "y": 8.69}, {"x": -2.77, "y": 7.5}, {"x": -3.27, "y": 6.71}, {"x": -3.03, "y": 1.5}, {"x": -1.0, "y": -1.18}, {"x": 0.14, "y": -2.67}, {"x": 2.11, "y": -1.96}, {"x": 1.03, "y": -7.22}, {"x": -0.44, "y": -3.75}, {"x": -0.46, "y": -1.74}, {"x": -1.01, "y": 0.18}, {"x": -0.15, "y": 6.26}, {"x": -0.88, "y": 5.17}, {"x": -1.59, "y": 6.27}, {"x": -1.41, "y": 3.66}, {"x": -2.09, "y": 5.7}, {"x": -1.95, "y": 8.23}, {"x": -1.55, "y": 7.86}, {"x": -2.44, "y": 7.64}, {"x": -3.32, "y": 5.94}, {"x": -5.14, "y": 9.22}, {"x": -3.71, "y": 7.43}, {"x": -2.22, "y": 6.76}, {"x": -5.4, "y": 8.85}, {"x": -6.13, "y": 10.93}, {"x": -7.4, "y": 8.88}, {"x": -8.27, "y": 6.15}, {"x": -8.62, "y": 5.65}, {"x": -8.45, "y": 8.87}, {"x": -7.02, "y": 5.71}, {"x": -6.24, "y": 1.18}, {"x": -6.9, "y": 3.86}, {"x": -4.73, "y": 7.01}, {"x": -5.05, "y": 7.33}, {"x": -4.56, "y": 5.54}, {"x": -2.0, "y": 6.3}],
+                        borderWidth: 2,
+                        pointRadius: 0, // 点は描画しない
+                        showLine: true,
+                        segment: {
+                            // 過去から現在に向かって濃くなるグラデーション
+                            borderColor: function(ctx) {
+                                var count = ctx.chart.data.datasets[0].data.length;
+                                var val = ctx.p1DataIndex / count;
+                                var alpha = 0.1 + (0.9 * val);
+                                return 'rgba(80, 80, 80, ' + alpha + ')';
+                            }
+                        },
+                        order: 2
+                    },
+                    {
+                        // 現在地 (点のみ)
+                        label: '現在',
+                        data: [{"x": -2.0, "y": 6.3}],
+                        backgroundColor: 'rgba(255, 0, 0, 1)',
+                        borderColor: '#fff',
+                        borderWidth: 2,
+                        pointRadius: 8,
+                        pointHoverRadius: 10,
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { min: -25, max: 25, grid: { display: false }, ticks: { display: false } },
+                    y: { min: -25, max: 25, grid: { display: false }, ticks: { display: false } }
+                },
+                plugins: { legend: {display: false}, tooltip: {enabled: false} }
+            },
+            plugins: [bgPlugin]
+        });
+    });
+    </script>
+</body>
+</html>

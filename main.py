@@ -306,8 +306,7 @@ def generate_wp_content(config, last_date_str, current_phase):
     wp_html = f"""
     <h3>米国市場 セクターローテーション {last_date_str}</h3>
     <p>現在の重心は<strong>【{current_phase}】</strong>エリアにあります。<br>
-    S&P500主要11セクターのモメンタムを解析し、過去1年間の景気循環の軌跡を描画しています。</p>
-    
+    S&P500主要11セクターのモメンタムを解析し、過去1年間の景気循環の軌跡を描画しています。<br>中心から離れるほどトレンドが強く、中心に近いほど方向感がないことを意味します。</p>
     <div style="width: 100%; max-width: 600px; aspect-ratio: 1; margin: 0 auto; border: 1px solid #eee; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
         <iframe src="{iframe_src}" width="100%" height="100%" style="border:none; display:block;" title="US Sector Cycle Chart"></iframe>
     </div>

@@ -40,5 +40,5 @@ jobs:
         if: success()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
+          publish_dir: ./public
           keep_files: false

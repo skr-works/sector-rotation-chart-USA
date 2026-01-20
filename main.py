@@ -335,8 +335,10 @@ def main():
 
     # 休日判定
     latest_date_timestamp = df.index[-1]
-    if not check_market_open(latest_date_timestamp):
-        sys.exit(0) # エラーではなく正常終了として処理をスキップ
+    
+    # 【修正箇所】休場日でデータが古くても、HTML生成を強制するためチェックを無効化（コメントアウト）
+    # if not check_market_open(latest_date_timestamp):
+    #    sys.exit(0) 
 
     last_date_str = latest_date_timestamp.strftime('%Y年%m月%d日')
     
@@ -386,11 +388,11 @@ def main():
     # GitHub Pages用HTML生成
     chart_html = create_standalone_html(history_points, current_point, last_date_str)
     
-    # 修正: publicフォルダ作成をやめ、ルートに直接保存する
-    output_file = "index.html"
-    with open(output_file, "w", encoding="utf-8") as f:
+    output_dir = "public"
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, "index.html"), "w", encoding="utf-8") as f:
         f.write(chart_html)
-    print(f"Generated index.html")
+    print(f"Generated public/index.html")
 
     # WordPress更新
     wp_content = generate_wp_content(config, last_date_str, current_phase)

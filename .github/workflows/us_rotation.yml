@@ -2,8 +2,8 @@ name: US Sector Rotation Update
 
 on:
   schedule:
-    # UTC 21:00 (Mon-Fri) = JST 06:00 (Tue-Sat)
-    - cron: '0 21 * * 1-5'
+    # UTC 21:53 (Mon-Fri) = JST 06:53 (Tue-Sat)
+    - cron: '53 21 * * 1-5'
   workflow_dispatch:
 
 permissions:
